@@ -1,0 +1,203 @@
+define({ "api": [
+  {
+    "type": "post",
+    "url": "/auth/login",
+    "title": "Login",
+    "name": "Login",
+    "group": "Auth",
+    "description": "<p>This endpoint authenticates user and returns a token.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>Mandatory username.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>Mandatory password.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{\n\n  \"username\":\"Zainab\",\n  \"password\":\"somepassword\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "1.0.0",
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n {\n\n        \"success\": true,\n        \"message\": \"Authentication successful!\",\n        \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InphaW5hYiIsImlhdCI6MTU1MDY5NTM4NCwiZXhwIjoxNTUwNzgxNzg0fQ.EDR_gRcmikcxGpNxoMk4ZjQt3RT00c7fR3gH0ZkGEt8\"\n    }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  success: false,\n  message: 'Authentication failed! username or password missing.\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "routes/auth.js",
+    "groupTitle": "Auth"
+  },
+  {
+    "type": "post",
+    "url": "/image-thumbnail/generate",
+    "title": "Generate Image Thumbnail",
+    "name": "Image_Thumbnail",
+    "group": "Protected_Routes",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>JWT token from successful authentication</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Header-Example:",
+          "content": "{\n  \"Authorization\": \"Bearer \"+token\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>This endpoint downloads an image from a URL and converts it to a thumbnail.</p> <p>The image parameter must be a url.</p> <p>This is a protected route so the token supplied upon successful authentication must be added to the request header.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "image",
+            "description": "<p>Mandatory image url.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "\n{\n  \"image\": \"http://jevinik.com.ng/images/logo.png\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "1.0.0",
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n {\n      \"status\": true,\n      \"filepath\": \"cropped_output.jpg\",\n      \"message\": \"Image reduced successfully\"\n  }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"status\": false,\n  \"message\": \"Unable to download. Please make sure the request is an image url.\"\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "routes/image_thumbnail.js",
+    "groupTitle": "Protected_Routes"
+  },
+  {
+    "type": "post",
+    "url": "/json-patching/parse",
+    "title": "Generate JSON Patching",
+    "name": "JSON_Patching",
+    "group": "Protected_Routes",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "token",
+            "description": "<p>JWT token from successful authentication</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Header-Example:",
+          "content": "{\n  \"Authorization\": \"Bearer \"+token\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "description": "<p>This endpoint modifies a json object using json_parse_object and returns a new object.</p> <p>The json_parse_object can either be a Object or an array of Objects.</p> <p>This is a protected route so the token supplied upon successful authentication must be added to the request header.</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "json_object",
+            "description": "<p>Mandatory json object.</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "Object",
+            "optional": false,
+            "field": "json_parse_object",
+            "description": "<p>Mandatory json patch object.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "\n{\n  \"json_object\": { \"firstName\": \"Zainab\", \"contactDetails\": { \"phoneNumbers\": [] }},\n  \"json_parse_object\":{ \"op\": \"add\", \"path\": \"/lastName\", \"value\": \"Adegoke\" }\n}\n\nor\n{\n \"json_object\": { \"firstName\": \"Zainab\", \"contactDetails\": { \"phoneNumbers\": [] }},\n \"json_parse_object\"\t : [\n     { \"op\": \"replace\", \"path\": \"/firstName\", \"value\": \"Olaitan\" },\n     { \"op\": \"add\", \"path\": \"/lastName\", \"value\": \"Adegoke\" },\n     { \"op\": \"add\", \"path\": \"/contactDetails/phoneNumbers/0\", \"value\": { \"number\": \"555-123\" }  }\n   ]\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "1.0.0",
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n {\n      \"success\": true,\n      \"message\": \"Data has been parsed. \",\n      \"data\": {\n          \"firstName\": \"Zainab\",\n          \"contactDetails\": {\n              \"phoneNumbers\": [\n                  {\n                      \"number\": \"555-123\"\n                  }\n              ]\n           },\n          \"lastName\": \"Adegoke\"\n      }\n  }",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "examples": [
+        {
+          "title": "Error-Response:",
+          "content": "HTTP/1.1 400 Bad Request\n{\n  \"success\": false,\n  \"message\": \"Missing object. Either the document object or the patch object is missing.\".\n}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "routes/json_patching.js",
+    "groupTitle": "Protected_Routes"
+  }
+] });
